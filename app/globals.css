@@ -10,21 +10,21 @@
     @layer base {
       :root {
         /* Core colors */
-        --brand-900: 10 10 10;        /* near black */
-        --surface: 20 20 20;          /* dark cards */
-        --border: 45 45 45;           /* subtle borders */
-        --muted: 170 170 170;         /* muted text */
-    
+        --brand-900: 10 10 10; /* near black */
+        --surface: 20 20 20; /* dark cards */
+        --border: 45 45 45; /* subtle borders */
+        --muted: 170 170 170; /* muted text */
+
         /* Accent (luxury red) */
-        --accent-500: 180 20 20;      /* deep red */
-        --accent-600: 140 15 15;      /* deeper red */
-    
+        --accent-500: 180 20 20; /* deep red */
+        --accent-600: 140 15 15; /* deeper red */
+
         /* Light text */
         --text-light: 245 245 245;
-    
+
         --radius-xl: 14px;
       }
-    
+
       body {
         @apply bg-[rgb(var(--brand-900))] text-[rgb(var(--text-light))] antialiased;
       }
