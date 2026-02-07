@@ -1,4 +1,5 @@
 import "./globals.css"
+import Navbar from "@/components/layout/Navbar"
 import { Inter, Playfair_Display } from "next/font/google"
 
 const inter = Inter({
@@ -14,7 +15,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata = {
-  title: "Emad Faddoul - Real Estate Broker",
+  title: "Real Estate Broker",
   description: "Professional real estate broker website for Emad Faddoul"
 }
 
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+        <Navbar />
         {children}
       </body>
     </html>

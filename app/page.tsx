@@ -1,8 +1,16 @@
+import Hero from "@/components/sections/Hero"
+import Services from "@/components/sections/Services"
+import FeaturedListings from "@/components/sections/FeaturedListings"
+import Testimonials from "@/components/sections/Testimonials"
+
 export default function Home() {
   return (
     <main>
-      <h1>Home</h1>
-      <p>Welcome to the real estate broker website.</p>
+      <Hero />
+      <Services />
+      <FeaturedListings />
+      <Testimonials />
+      
     </main>
   )
 }
