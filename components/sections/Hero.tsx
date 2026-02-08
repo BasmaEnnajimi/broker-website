@@ -9,34 +9,40 @@ export default function Hero() {
       <div className="absolute inset-0 bg-neutral-950" />
 
       {/* HOUSE BACKGROUND */}
-      <div className="absolute inset-y-[-25%] right-[-10%] w-[120%] overflow-hidden pointer-events-none">
+      <div className="pointer-events-none absolute inset-y-[-25%] right-[-10%] w-[120%] overflow-hidden">
         <Image
           src="/images/hero/house-ph-no-bg.png"
           alt="Luxury house"
           fill
           priority
-          className="object-cover object-right opacity-40 brightness-90 blur-[2px]"
+          className="object-cover object-right opacity-35 brightness-90 blur-[1.5px]"
         />
 
-        {/* FADE: LEFT BLACK → RIGHT HOUSE */}
+        {/* SOFTER FADE */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to right, black 0%, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0.75) 45%, rgba(0,0,0,0.4) 65%, transparent 100%)"
+              "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.35) 70%, transparent 100%)"
           }}
         />
       </div>
 
       {/* CONTENT */}
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-center px-6">
-        <div className="grid w-full grid-cols-1 items-center gap-16 lg:grid-cols-2">
+        <div className="grid w-full grid-cols-1 items-center gap-20 lg:grid-cols-2">
 
           {/* LEFT SIDE */}
           <div>
-            {/* TAG */}
-            <div className="mb-6 inline-flex items-center rounded-full border border-red-600/40 px-4 py-1 text-xs tracking-widest text-red-500">
-              LUXURY REAL ESTATE
+            {/* BROKER LOGO */}
+            <div className="mb-8">
+              <Image
+                src="/images/hero/logo.png"
+                alt="Broker logo"
+                width={300}
+                height={40}
+                className="opacity-90"
+              />
             </div>
 
             {/* HEADLINE */}
@@ -45,12 +51,13 @@ export default function Hero() {
             </h1>
 
             {/* SUBLINE */}
-            <p className="mb-10 max-w-xl text-neutral-400">
-              With Emad Faddoul, your trusted real estate expert.
+            <p className="mb-12 max-w-xl text-neutral-400 leading-relaxed">
+              A refined approach to buying and selling real estate in
+              Montreal, guided by experience, strategy, and trust.
             </p>
 
-            {/* SEARCH BAR (FIXED, NO MOVEMENT) */}
-            <div className="grid w-full max-w-xl grid-cols-1 gap-3 rounded-xl border border-neutral-800 bg-black/70 p-4 backdrop-blur md:grid-cols-[2fr_1fr_1fr_auto] md:items-center">
+            {/* SEARCH BAR */}
+            <div className="grid w-full max-w-xl grid-cols-1 gap-3 rounded-2xl border border-neutral-800 bg-black/70 p-4 backdrop-blur md:grid-cols-[2fr_1fr_1fr_auto] md:items-center">
               <input
                 type="text"
                 placeholder="City, Address, Postal Code"
@@ -65,7 +72,7 @@ export default function Hero() {
                 <option>Min. Price</option>
               </select>
 
-              <button className="h-12 whitespace-nowrap rounded-md bg-red-600 px-6 text-sm font-medium text-white transition duration-300 hover:bg-red-700">
+              <button className="h-12 whitespace-nowrap rounded-md bg-red-600 px-6 text-sm font-medium text-white transition hover:bg-red-700">
                 Search
               </button>
             </div>
@@ -83,7 +90,7 @@ export default function Hero() {
             />
 
             {/* DEPTH SHADOW */}
-            <div className="absolute bottom-[-40px] right-[40px] h-[280px] w-[420px] rounded-xl bg-black/60 blur-2xl" />
+            <div className="absolute bottom-[-40px] right-[40px] h-[260px] w-[400px] rounded-xl bg-black/60 blur-2xl" />
           </div>
 
         </div>

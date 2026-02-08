@@ -82,7 +82,7 @@ export default function FeaturedListings() {
         </p>
 
         {/* BLACK CONTAINER */}
-        <div className="relative rounded-xl border border-neutral-800 bg-black backdrop-blur">
+        <div className="relative rounded-xl border border-neutral-900 bg-black backdrop-blur">
 
           {/* INNER PADDING (IMPORTANT FIX) */}
           <div className="relative overflow-hidden px-6 py-6">
