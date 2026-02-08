@@ -69,11 +69,11 @@ export default function FeaturedListings() {
     setIndex(i => (i === maxIndex ? 0 : i + 1))
 
   return (
-    <section className="relative z-10 bg-neutral-950 py-24">
+    <section className="relative z-10 bg-neutral-50 py-24">
       <div className="mx-auto max-w-7xl px-6">
 
         {/* TITLE */}
-        <h2 className="mb-2 font-display text-3xl text-white">
+        <h2 className="mb-2 font-display text-3xl text-black">
           Featured Properties
         </h2>
 
@@ -82,7 +82,7 @@ export default function FeaturedListings() {
         </p>
 
         {/* BLACK CONTAINER */}
-        <div className="relative rounded-xl border border-neutral-800 bg-black/70 backdrop-blur">
+        <div className="relative rounded-xl border border-neutral-800 bg-black backdrop-blur">
 
           {/* INNER PADDING (IMPORTANT FIX) */}
           <div className="relative overflow-hidden px-6 py-6">

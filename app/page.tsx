@@ -12,7 +12,6 @@ export default function Home() {
       <FeaturedListings />
       <Testimonials />
       <FAQ />
-      
     </main>
   )
 }
