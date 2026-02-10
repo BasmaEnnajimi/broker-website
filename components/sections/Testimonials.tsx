@@ -30,8 +30,7 @@ const testimonials = [
 ]
 
 // helper to generate rating between 4.0 and 5.0
-const generateRating = () =>
-  Math.round((4 + Math.random()) * 10) / 10
+const rating = 4.5;
 
 export default function Testimonials() {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -39,7 +38,7 @@ export default function Testimonials() {
 
   // generate ratings ONCE
   const [ratings] = useState(() =>
-    testimonials.map(() => generateRating())
+    testimonials.map(() => rating)
   )
 
   useEffect(() => {

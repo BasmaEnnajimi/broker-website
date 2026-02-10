@@ -10,7 +10,7 @@ export default function ContactPage() {
         <h1 className="font-display text-4xl text-neutral-900">
           Get in Touch
         </h1>
-        <p className="mt-4 text-neutral-600 leading-relaxed">
+        <p className="mt-4 leading-relaxed text-neutral-600">
           Whether you’re looking to buy, sell, or simply have questions,
           I’m here to help. Choose the option that works best for you.
         </p>
@@ -19,12 +19,12 @@ export default function ContactPage() {
       {/* Main grid */}
       <div className="grid gap-16 lg:grid-cols-3">
         {/* Booking section */}
-        <div className="relative lg:col-span-2 rounded-3xl bg-neutral-900 p-10 text-white overflow-hidden">
+        <div className="relative overflow-hidden rounded-3xl bg-neutral-900 p-10 text-white lg:col-span-2">
           {/* subtle red glow */}
-          <div className="pointer-events-none absolute -top-24 -right-26 h-64 w-64 rounded-full bg-red-600/20 blur-3xl" />
+          <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-red-600/20 blur-3xl" />
 
           <div className="flex items-center gap-3">
-            <CalendarDays className="text-red-500" size={22} />
+            <CalendarDays size={22} className="text-red-500" />
             <h2 className="font-display text-2xl">
               Book a Private Consultation
             </h2>
@@ -35,9 +35,15 @@ export default function ContactPage() {
             Virtual and in-person appointments available.
           </p>
 
-          <div className="mt-8 rounded-2xl border border-neutral-700 bg-neutral-800 p-6 text-center text-neutral-400 transition">
-            Calendar booking integration goes here  
-            (Calendly embed)
+          {/* Calendly Embed */}
+          <div className="mt-8 overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-800">
+            <iframe
+              src="https://calendly.com/basma110605/30min"
+              width="100%"
+              height="650"
+              frameBorder="0"
+              className="rounded-2xl"
+            />
           </div>
 
           <p className="mt-4 text-sm text-neutral-400">
@@ -56,7 +62,7 @@ export default function ContactPage() {
               <span className="block text-neutral-500">Phone</span>
               <a
                 href="tel:+15145555555"
-                className="hover:text-red-600 transition"
+                className="transition hover:text-red-600"
               >
                 +1 (514) 555-5555
               </a>
@@ -66,7 +72,7 @@ export default function ContactPage() {
               <span className="block text-neutral-500">Email</span>
               <a
                 href="mailto:emad@example.com"
-                className="hover:text-red-600 transition"
+                className="transition hover:text-red-600"
               >
                 emad@example.com
               </a>
@@ -91,8 +97,7 @@ export default function ContactPage() {
                   href="#"
                   className="rounded-full border border-neutral-300 p-3
                     text-neutral-600 transition
-                    hover:border-red-600 hover:text-red-600
-                    hover:-translate-y-0.5"
+                    hover:-translate-y-0.5 hover:border-red-600 hover:text-red-600"
                 >
                   <Icon size={18} />
                 </a>

@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PropertyStatus {
+  FOR_SALE
+  SOLD
+}
+
+enum PropertyDetailCategory {
+  BUILDING_INFO
+  EXPENSE
+  ROOM
+}
+
+model Property {
+  id          String   @id
+  mls         String   @unique
+  title       String
+  address     String
+  price       Int
+  status      PropertyStatus
+  type        String
+  bedrooms    Int
+  bathrooms   Int
+  sqft        Int
+  yearBuilt   Int
+  parking     String
+  description String
+
+  highlights  String[]
+  images      String[]
+
+  details         PropertyDetail[]
+  characteristics PropertyCharacteristic[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PropertyDetail {
+  id         String   @id @default(cuid())
+  label      String
+  value      String
+  category   PropertyDetailCategory
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+}
+
+model PropertyCharacteristic {
+  id         String   @id @default(cuid())
+  value      String
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+}

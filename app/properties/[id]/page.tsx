@@ -1,13 +1,8 @@
 import { notFound } from "next/navigation"
-import { properties, getPropertyById, formatPriceCAD } from "@/data/properties"
+import { getPropertyById } from "@/lib/properties"
+import { formatPriceCAD } from "@/lib/format"
 import PropertyGallery from "@/components/property/PropertyGallery"
 import PropertyFAQ from "@/components/property/PropertyFAQ"
-
-export function generateStaticParams() {
-  return properties.map((p) => ({
-    id: p.id,
-  }))
-}
 
 export default async function PropertyDetailPage({
   params,
@@ -15,12 +10,20 @@ export default async function PropertyDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const property = getPropertyById(id)
+
+  const property = await getPropertyById(id)
   if (!property) return notFound()
 
-  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(
-    property.address
-  )}&output=embed`
+  const isForSale = property.status === "FOR_SALE"
+
+  // ✅ destructure ONLY after logic decision
+  const address = isForSale ? property.address : null
+
+  const mapSrc = address
+    ? `https://www.google.com/maps?q=${encodeURIComponent(
+        address
+      )}&output=embed`
+    : null
 
   return (
     <section className="mx-auto max-w-7xl px-6 pb-24 pt-32">
@@ -37,9 +40,14 @@ export default async function PropertyDetailPage({
           </h1>
 
           <p className="mt-3 text-neutral-500">
-            {property.address}
+            {address ?? "Address available upon request"}
           </p>
-
+          
+        {isForSale && (
+          <p className="mt-2 text-sm text-neutral-400">
+            MLS® {property.mls}
+          </p>
+        )}
           <p className="mt-6 max-w-2xl text-neutral-600 leading-relaxed">
             {property.description}
           </p>
@@ -48,8 +56,9 @@ export default async function PropertyDetailPage({
         {/* Price Card */}
         <div className="rounded-3xl bg-neutral-900 p-8 text-white">
           <p className="text-sm text-neutral-400">
-            Asking Price
+            {isForSale ? "Asking Price" : "Last Listed Price"}
           </p>
+
           <p className="mt-2 font-display text-3xl">
             {formatPriceCAD(property.price)}
           </p>
@@ -73,23 +82,28 @@ export default async function PropertyDetailPage({
           </h2>
 
           <div className="rounded-3xl border border-neutral-200 bg-white p-6">
-            <PropertyFAQ details={property.details} />
-          </div>
-        </div>
-
-        <div>
-          <h2 className="mb-8 font-display text-2xl text-neutral-900">
-            Location
-          </h2>
-
-          <div className="overflow-hidden rounded-3xl border border-neutral-200">
-            <iframe
-              src={mapSrc}
-              className="h-[420px] w-full"
-              loading="lazy"
+            <PropertyFAQ
+              details={property.details}
+              characteristics={property.characteristics}
             />
           </div>
         </div>
+
+        {mapSrc && (
+          <div>
+            <h2 className="mb-8 font-display text-2xl text-neutral-900">
+              Location
+            </h2>
+
+            <div className="overflow-hidden rounded-3xl border border-neutral-200">
+              <iframe
+                src={mapSrc}
+                className="h-[420px] w-full"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )
