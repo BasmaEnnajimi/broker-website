@@ -55,27 +55,6 @@ export default function Hero() {
               A refined approach to buying and selling real estate in
               Montreal, guided by experience, strategy, and trust.
             </p>
-
-            {/* SEARCH BAR */}
-            <div className="grid w-full max-w-xl grid-cols-1 gap-3 rounded-2xl border border-neutral-800 bg-black/70 p-4 backdrop-blur md:grid-cols-[2fr_1fr_1fr_auto] md:items-center">
-              <input
-                type="text"
-                placeholder="City, Address, Postal Code"
-                className="h-12 w-full rounded-md bg-neutral-900 px-4 text-sm text-white placeholder-neutral-500 outline-none"
-              />
-
-              <select className="h-12 w-full rounded-md bg-neutral-900 px-4 text-sm text-neutral-400 outline-none">
-                <option>Property Type</option>
-              </select>
-
-              <select className="h-12 w-full rounded-md bg-neutral-900 px-4 text-sm text-neutral-400 outline-none">
-                <option>Min. Price</option>
-              </select>
-
-              <button className="h-12 whitespace-nowrap rounded-md bg-red-600 px-6 text-sm font-medium text-white transition hover:bg-red-700">
-                Search
-              </button>
-            </div>
           </div>
 
           {/* RIGHT SIDE – BROKER */}

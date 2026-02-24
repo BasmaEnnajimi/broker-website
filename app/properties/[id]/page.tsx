@@ -40,7 +40,7 @@ export default async function PropertyDetailPage({
           </h1>
 
           <p className="mt-3 text-neutral-500">
-            {address ?? "Address available upon request"}
+            {address ?? ""}
           </p>
           
         {isForSale && (
