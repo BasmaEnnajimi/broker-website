@@ -54,7 +54,7 @@ export default async function PropertyDetailPage({
         </div>
 
         {/* Price Card */}
-        <div className="rounded-3xl bg-neutral-900 p-8 text-white">
+        <div className="rounded-3xl bg-neutral-900 p-8 text-white lg:sticky lg:top-32 h-fit">
           <p className="text-sm text-neutral-400">
             {isForSale ? "Asking Price" : "Last Listed Price"}
           </p>

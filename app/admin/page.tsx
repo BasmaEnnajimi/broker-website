@@ -63,12 +63,18 @@ export default async function AdminPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="relative h-14 w-20 overflow-hidden rounded-lg">
+                      {p.images.length > 0 ? (
                         <Image
-                          src={p.images[0]}
-                          alt={p.title}
-                          fill
-                          className="object-cover"
+                            src={p.images[0]}
+                            alt={p.title}
+                            fill
+                            className="object-cover"
                         />
+                        ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-xs text-neutral-400">
+                            No Image
+                        </div>
+                        )}
                       </div>
 
                       <span className="font-medium text-neutral-900">

@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         title: body.title,
         address: body.address,
         price: Number(body.price),
-        status: body.status, // must be FOR_SALE or SOLD
+        status: body.status,
         type: body.type,
         bedrooms: Number(body.bedrooms),
         bathrooms: Number(body.bathrooms),
@@ -28,8 +28,8 @@ export async function POST(req: Request) {
         yearBuilt: Number(body.yearBuilt),
         parking: body.parking,
         description: body.description,
-        highlights: [], // required array
-        images: body.image ? [body.image] : [], // required array
+        highlights: [],
+        images: body.images,
       },
     })
 

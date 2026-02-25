@@ -85,12 +85,14 @@ export default async function PropertiesPage({
             >
               {/* IMAGE */}
               <div className="relative h-72 overflow-hidden">
+              {p.images.length > 0 && (
                 <Image
-                  src={p.images[0]}
-                  alt={p.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    src={p.images[0]}
+                    alt={p.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                )}
               </div>
 
               {/* CONTENT */}
