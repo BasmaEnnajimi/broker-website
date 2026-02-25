@@ -61,27 +61,30 @@ export default async function AdminPage() {
                 >
                   {/* PROPERTY COLUMN WITH IMAGE */}
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="relative h-14 w-20 overflow-hidden rounded-lg">
-                      {p.images.length > 0 ? (
-                        <Image
+                    <Link
+                        href={`/properties/${p.id}`}
+                        className="flex items-center gap-4 group"
+                    >
+                        <div className="relative h-14 w-20 overflow-hidden rounded-lg">
+                        {p.images.length > 0 ? (
+                            <Image
                             src={p.images[0]}
                             alt={p.title}
                             fill
-                            className="object-cover"
-                        />
+                            className="object-cover transition group-hover:scale-105"
+                            />
                         ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-xs text-neutral-400">
+                            <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-xs text-neutral-400">
                             No Image
-                        </div>
+                            </div>
                         )}
-                      </div>
+                        </div>
 
-                      <span className="font-medium text-neutral-900">
+                        <span className="font-medium text-neutral-900 transition group-hover:text-red-600">
                         {p.title}
-                      </span>
-                    </div>
-                  </td>
+                        </span>
+                    </Link>
+                    </td>
 
                   <td className="px-6 py-4 text-neutral-600">
                     {p.mls}
