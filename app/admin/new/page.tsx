@@ -4,20 +4,7 @@ import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core"
-
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable"
+import ImageUploader from "../components/ImageUploader"
 
 import { CSS } from "@dnd-kit/utilities"
 
@@ -268,45 +255,12 @@ export default function NewPropertyPage() {
           </div>
 
           {/* IMAGES */}
-          <div>
-            <h2 className="mb-6 text-2xl font-display">
-              Images
-            </h2>
-
-            <div className="grid md:grid-cols-4 gap-6">
-
-              {safeImages.map((img,i)=>(
-                <div key={i} className="relative rounded-2xl border overflow-hidden">
-
-                  <div className="relative aspect-[4/3]">
-                    <Image src={img} alt="" fill className="object-cover"/>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={()=>removeImage(i)}
-                    className="absolute right-3 top-3 bg-black/70 text-white rounded-full w-8 h-8"
-                  >
-                    ×
-                  </button>
-
-                </div>
-              ))}
-
-            </div>
-
-            <div className="mt-8">
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e)=>{
-                  if(e.target.files) handleImageUpload(e.target.files)
-                }}
-              />
-            </div>
-          </div>
-
+          <ImageUploader
+            images={images}
+            setImages={setImages}
+            handleImageUpload={handleImageUpload}
+          />
+          
           <button
             type="submit"
             className="bg-neutral-900 text-white px-8 py-3 rounded-xl"

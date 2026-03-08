@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
+import ImageUploader from "../../components/ImageUploader"
 
 type Detail = {
   label: string
@@ -224,45 +224,12 @@ export default function EditPropertyForm({
       </div>
 
       {/* IMAGES */}
-      <div>
-        <h2 className="mb-6 font-display text-2xl text-neutral-900">
-          Images
-        </h2>
-
-        <div className="grid gap-6 md:grid-cols-4">
-          {safeImages.map((img, i) => (
-            <div
-              key={i}
-              className="relative overflow-hidden rounded-2xl border border-neutral-200"
-            >
-              <div className="relative aspect-[4/3]">
-                <Image src={img} alt="" fill className="object-cover" />
-              </div>
-
-              <button
-                type="button"
-                onClick={() => removeImage(i)}
-                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 text-white hover:bg-red-600"
-              >
-                ×
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8">
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={(e) => {
-              if (e.target.files) handleImageUpload(e.target.files)
-              e.currentTarget.value = ""
-            }}
-          />
-        </div>
-      </div>
-
+      <ImageUploader
+        images={images}
+        setImages={setImages}
+        handleImageUpload={handleImageUpload}
+      />
+      
       {/* PROPERTY DETAILS */}
       <div>
         <h2 className="mb-6 font-display text-2xl text-neutral-900">
