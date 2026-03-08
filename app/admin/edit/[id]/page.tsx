@@ -19,8 +19,15 @@ export default async function EditPropertyPage({
 
   const property = await prisma.property.findUnique({
     where: { id },
+
+    include: {
+      details: true,
+      characteristics: true,
+    },
   })
-  console.log("EDIT", property) // Debug log
+
+  console.log("EDIT", property)
+
   if (!property) return notFound()
 
   return (
@@ -34,6 +41,7 @@ export default async function EditPropertyPage({
             <h1 className="font-display text-4xl text-neutral-900">
               Edit Property
             </h1>
+
             <p className="mt-4 text-neutral-600">
               Update listing details, images and status.
             </p>

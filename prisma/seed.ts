@@ -25,10 +25,6 @@ async function main() {
       skipDuplicates: true,
     })
 
-
-  // CLEAN START (optional but recommended)
-  await prisma.property.deleteMany()
-
   // FOR SALE PROPERTY
   await prisma.property.create({
     data: {

@@ -4,6 +4,33 @@ import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
+
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable"
+
+import { CSS } from "@dnd-kit/utilities"
+
+type Detail = {
+  label: string
+  value: string
+  category: "BUILDING_INFO" | "ROOM" | "EXPENSE"
+}
+
+type Characteristic = {
+  value: string
+}
+
 type PropertyFormState = {
   id: string
   title: string
@@ -18,8 +45,6 @@ type PropertyFormState = {
   yearBuilt: number | string
   parking: string
   description: string
-  highlights?: string[]
-  images?: string[]
 }
 
 export default function NewPropertyPage() {
@@ -42,17 +67,16 @@ export default function NewPropertyPage() {
   })
 
   const [images, setImages] = useState<string[]>([])
+  const [details, setDetails] = useState<Detail[]>([])
+  const [characteristics, setCharacteristics] = useState<Characteristic[]>([])
 
   const safeImages = useMemo(
-    () => images.filter((x) => typeof x === "string" && x.trim().length > 0),
+    () => images.filter((x) => x && x.trim().length > 0),
     [images]
   )
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+  const handleChange = (e: any) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const removeImage = (index: number) => {
@@ -71,39 +95,61 @@ export default function NewPropertyPage() {
         body: fd,
       })
 
-      if (!res.ok) {
-        const txt = await res.text()
-        alert("Upload failed: " + txt)
-        return
-      }
-
       const data = await res.json()
-      if (data?.secure_url) uploaded.push(String(data.secure_url))
+      if (data?.secure_url) uploaded.push(data.secure_url)
     }
 
     setImages((prev) => [...prev, ...uploaded])
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const addDetail = () => {
+    setDetails((prev) => [
+      ...prev,
+      { label: "", value: "", category: "BUILDING_INFO" },
+    ])
+  }
+
+  const updateDetail = (i: number, field: string, value: string) => {
+    setDetails((prev) =>
+      prev.map((d, index) =>
+        index === i ? { ...d, [field]: value } : d
+      )
+    )
+  }
+
+  const removeDetail = (i: number) => {
+    setDetails((prev) => prev.filter((_, index) => index !== i))
+  }
+
+  const addCharacteristic = () => {
+    setCharacteristics((prev) => [...prev, { value: "" }])
+  }
+
+  const updateCharacteristic = (i: number, value: string) => {
+    setCharacteristics((prev) =>
+      prev.map((c, index) =>
+        index === i ? { value } : c
+      )
+    )
+  }
+
+  const removeCharacteristic = (i: number) => {
+    setCharacteristics((prev) => prev.filter((_, index) => index !== i))
+  }
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault()
 
     const payload = {
-      id: form.id.trim(),
-      title: form.title.trim(),
-      mls: form.mls.trim(),
-      address: form.address.trim(),
-      status: form.status,
-      type: form.type.trim(),
-      parking: form.parking.trim(),
-      description: form.description.trim(),
-
+      ...form,
       price: Number(form.price),
       bedrooms: Number(form.bedrooms),
       bathrooms: Number(form.bathrooms),
       sqft: Number(form.sqft),
       yearBuilt: Number(form.yearBuilt),
-
       images: safeImages,
+      details,
+      characteristics,
     }
 
     const res = await fetch("/api/admin/create-property", {
@@ -113,8 +159,7 @@ export default function NewPropertyPage() {
     })
 
     if (!res.ok) {
-      const txt = await res.text()
-      alert("Create failed: " + txt)
+      alert("Create failed")
       return
     }
 
@@ -125,153 +170,151 @@ export default function NewPropertyPage() {
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-6 pt-32 pb-24">
-        <div className="mb-6 h-1 w-14 rounded-full bg-red-600" />
 
-        <div className="flex items-center justify-between">
+        <h1 className="font-display text-4xl text-neutral-900">
+          Create Property
+        </h1>
+
+        <form onSubmit={handleSubmit} className="mt-14 space-y-12">
+
+          {/* PROPERTY DETAILS */}
           <div>
-            <h1 className="font-display text-4xl text-neutral-900">
-              Create Property
-            </h1>
-            <p className="mt-4 text-neutral-600">
-              Add a new listing, upload images and set visibility.
-            </p>
-          </div>
-        </div>
+            <h2 className="mb-6 text-2xl font-display">
+              Property Details
+            </h2>
 
-        <div className="mt-14">
-          <form onSubmit={handleSubmit} className="space-y-12">
-            {/* FIELDS */}
-            <div className="overflow-hidden rounded-3xl border border-neutral-200">
-              <table className="w-full text-left text-sm">
-                <tbody className="divide-y divide-neutral-200">
-                  {[
-                    { label: "Slug ID", name: "id" },
-                    { label: "Title", name: "title" },
-                    { label: "MLS", name: "mls" },
-                    { label: "Address", name: "address" },
-                    { label: "Type", name: "type" },
-                    { label: "Parking", name: "parking" },
-                    { label: "Price", name: "price", type: "number" },
-                    { label: "Bedrooms", name: "bedrooms", type: "number" },
-                    { label: "Bathrooms", name: "bathrooms", type: "number" },
-                    { label: "Square Feet", name: "sqft", type: "number" },
-                    { label: "Year Built", name: "yearBuilt", type: "number" },
-                  ].map((field) => (
-                    <tr key={field.name}>
-                      <td className="w-1/4 px-6 py-5 text-neutral-600">
-                        {field.label}
-                      </td>
-                      <td className="px-6 py-5">
-                        <input
-                          type={field.type || "text"}
-                          name={field.name}
-                          value={(form as any)[field.name] ?? ""}
-                          onChange={handleChange}
-                          required
-                          className="w-full rounded-xl border border-neutral-300 px-4 py-2 focus:border-red-600 focus:outline-none"
-                        />
-                      </td>
-                    </tr>
-                  ))}
+            <div className="space-y-4">
+              {details.map((d, i) => (
+                <div key={i} className="flex gap-4">
 
-                  <tr>
-                    <td className="px-6 py-5 text-neutral-600">Status</td>
-                    <td className="px-6 py-5">
-                      <select
-                        name="status"
-                        value={form.status}
-                        onChange={handleChange}
-                        className="rounded-xl border border-neutral-300 px-4 py-2 focus:border-red-600 focus:outline-none"
-                      >
-                        <option value="FOR_SALE">For Sale</option>
-                        <option value="SOLD">Sold</option>
-                      </select>
-                    </td>
-                  </tr>
+                  <input
+                    placeholder="Label"
+                    value={d.label}
+                    onChange={(e)=>updateDetail(i,"label",e.target.value)}
+                    className="flex-1 rounded-xl border px-4 py-2"
+                  />
 
-                  <tr>
-                    <td className="px-6 py-5 text-neutral-600 align-top">
-                      Description
-                    </td>
-                    <td className="px-6 py-5">
-                      <textarea
-                        name="description"
-                        value={form.description ?? ""}
-                        onChange={handleChange}
-                        rows={6}
-                        required
-                        className="w-full rounded-xl border border-neutral-300 px-4 py-3 focus:border-red-600 focus:outline-none"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                  <input
+                    placeholder="Value"
+                    value={d.value}
+                    onChange={(e)=>updateDetail(i,"value",e.target.value)}
+                    className="flex-1 rounded-xl border px-4 py-2"
+                  />
 
-            {/* IMAGES */}
-            <div>
-              <h2 className="mb-6 font-display text-2xl text-neutral-900">
-                Images
-              </h2>
+                  <select
+                    value={d.category}
+                    onChange={(e)=>updateDetail(i,"category",e.target.value)}
+                    className="rounded-xl border px-4 py-2"
+                  >
+                    <option value="BUILDING_INFO">Building</option>
+                    <option value="ROOM">Room</option>
+                    <option value="EXPENSE">Expense</option>
+                  </select>
 
-              {safeImages.length === 0 ? (
-                <div className="rounded-3xl border border-neutral-200 bg-neutral-50 p-10 text-sm text-neutral-500">
-                  No images yet. Upload some below.
+                  <button
+                    type="button"
+                    onClick={()=>removeDetail(i)}
+                    className="bg-red-600 text-white px-3 rounded"
+                  >
+                    ×
+                  </button>
+
                 </div>
-              ) : (
-                <div className="grid gap-6 md:grid-cols-4">
-                  {safeImages.map((img, i) => (
-                    <div
-                      key={`${img}-${i}`}
-                      className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white"
-                    >
-                      <div className="relative aspect-[4/3]">
-                        <Image
-                          src={img}
-                          alt=""
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
+              ))}
 
-                      <button
-                        type="button"
-                        onClick={() => removeImage(i)}
-                        className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-red-600"
-                        aria-label="Remove image"
-                        title="Remove image"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="mt-8">
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files) handleImageUpload(e.target.files)
-                    e.currentTarget.value = ""
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* SAVE */}
-            <div className="flex justify-end">
               <button
-                type="submit"
-                className="rounded-xl bg-neutral-900 px-8 py-3 text-sm font-medium text-white transition hover:bg-red-600"
+                type="button"
+                onClick={addDetail}
+                className="bg-neutral-900 text-white px-4 py-2 rounded-xl"
               >
-                Create Property
+                + Add Detail
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+
+          {/* CHARACTERISTICS */}
+          <div>
+            <h2 className="mb-6 text-2xl font-display">
+              Characteristics
+            </h2>
+
+            {characteristics.map((c,i)=>(
+              <div key={i} className="flex gap-4 mb-4">
+
+                <input
+                  value={c.value}
+                  onChange={(e)=>updateCharacteristic(i,e.target.value)}
+                  className="flex-1 rounded-xl border px-4 py-2"
+                />
+
+                <button
+                  type="button"
+                  onClick={()=>removeCharacteristic(i)}
+                  className="bg-red-600 text-white px-3 rounded"
+                >
+                  ×
+                </button>
+
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={addCharacteristic}
+              className="bg-neutral-900 text-white px-4 py-2 rounded-xl"
+            >
+              + Add Characteristic
+            </button>
+          </div>
+
+          {/* IMAGES */}
+          <div>
+            <h2 className="mb-6 text-2xl font-display">
+              Images
+            </h2>
+
+            <div className="grid md:grid-cols-4 gap-6">
+
+              {safeImages.map((img,i)=>(
+                <div key={i} className="relative rounded-2xl border overflow-hidden">
+
+                  <div className="relative aspect-[4/3]">
+                    <Image src={img} alt="" fill className="object-cover"/>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={()=>removeImage(i)}
+                    className="absolute right-3 top-3 bg-black/70 text-white rounded-full w-8 h-8"
+                  >
+                    ×
+                  </button>
+
+                </div>
+              ))}
+
+            </div>
+
+            <div className="mt-8">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e)=>{
+                  if(e.target.files) handleImageUpload(e.target.files)
+                }}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-neutral-900 text-white px-8 py-3 rounded-xl"
+          >
+            Create Property
+          </button>
+
+        </form>
       </div>
     </section>
   )
