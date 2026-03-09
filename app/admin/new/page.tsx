@@ -2,11 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
-
 import ImageUploader from "../components/ImageUploader"
-
-import { CSS } from "@dnd-kit/utilities"
 
 type Detail = {
   label: string
@@ -35,6 +31,7 @@ type PropertyFormState = {
 }
 
 export default function NewPropertyPage() {
+
   const router = useRouter()
 
   const [form, setForm] = useState<PropertyFormState>({
@@ -58,22 +55,21 @@ export default function NewPropertyPage() {
   const [characteristics, setCharacteristics] = useState<Characteristic[]>([])
 
   const safeImages = useMemo(
-    () => images.filter((x) => x && x.trim().length > 0),
+    () => images.filter((x) => typeof x === "string" && x.trim().length > 0),
     [images]
   )
 
   const handleChange = (e: any) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-  }
-
-  const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index))
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleImageUpload = async (files: FileList) => {
+
     const uploaded: string[] = []
 
     for (let i = 0; i < files.length; i++) {
+
       const fd = new FormData()
       fd.append("file", files[i])
 
@@ -83,6 +79,7 @@ export default function NewPropertyPage() {
       })
 
       const data = await res.json()
+
       if (data?.secure_url) uploaded.push(data.secure_url)
     }
 
@@ -125,6 +122,7 @@ export default function NewPropertyPage() {
   }
 
   const handleSubmit = async (e: any) => {
+
     e.preventDefault()
 
     const payload = {
@@ -155,7 +153,9 @@ export default function NewPropertyPage() {
   }
 
   return (
+
     <section className="bg-white">
+
       <div className="mx-auto max-w-7xl px-6 pt-32 pb-24">
 
         <h1 className="font-display text-4xl text-neutral-900">
@@ -164,14 +164,87 @@ export default function NewPropertyPage() {
 
         <form onSubmit={handleSubmit} className="mt-14 space-y-12">
 
+          {/* PROPERTY FIELDS */}
+          <div className="overflow-hidden rounded-3xl border border-neutral-200">
+            <table className="w-full text-left text-sm">
+              <tbody className="divide-y divide-neutral-200">
+
+                {[
+                  { label: "Title", name: "title" },
+                  { label: "MLS", name: "mls" },
+                  { label: "Address", name: "address" },
+                  { label: "Type", name: "type" },
+                  { label: "Parking", name: "parking" },
+                  { label: "Price", name: "price", type: "number" },
+                  { label: "Bedrooms", name: "bedrooms", type: "number" },
+                  { label: "Bathrooms", name: "bathrooms", type: "number" },
+                  { label: "Square Feet", name: "sqft", type: "number" },
+                  { label: "Year Built", name: "yearBuilt", type: "number" },
+                ].map((field) => (
+                  <tr key={field.name}>
+                    <td className="w-1/4 px-6 py-5 text-neutral-600">
+                      {field.label}
+                    </td>
+
+                    <td className="px-6 py-5">
+                      <input
+                        type={field.type || "text"}
+                        name={field.name}
+                        value={(form as any)[field.name]}
+                        onChange={handleChange}
+                        className="w-full rounded-xl border border-neutral-300 px-4 py-2 focus:border-red-600 focus:outline-none"
+                      />
+                    </td>
+                  </tr>
+                ))}
+
+                <tr>
+                  <td className="px-6 py-5 text-neutral-600">Status</td>
+
+                  <td className="px-6 py-5">
+                    <select
+                      name="status"
+                      value={form.status}
+                      onChange={handleChange}
+                      className="rounded-xl border border-neutral-300 px-4 py-2"
+                    >
+                      <option value="FOR_SALE">For Sale</option>
+                      <option value="SOLD">Sold</option>
+                    </select>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="px-6 py-5 text-neutral-600 align-top">
+                    Description
+                  </td>
+
+                  <td className="px-6 py-5">
+                    <textarea
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      rows={6}
+                      className="w-full rounded-xl border border-neutral-300 px-4 py-3"
+                    />
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
           {/* PROPERTY DETAILS */}
           <div>
+
             <h2 className="mb-6 text-2xl font-display">
               Property Details
             </h2>
 
             <div className="space-y-4">
+
               {details.map((d, i) => (
+
                 <div key={i} className="flex gap-4">
 
                   <input
@@ -216,11 +289,14 @@ export default function NewPropertyPage() {
               >
                 + Add Detail
               </button>
+
             </div>
+
           </div>
 
           {/* CHARACTERISTICS */}
           <div>
+
             <h2 className="mb-6 text-2xl font-display">
               Characteristics
             </h2>
@@ -252,6 +328,7 @@ export default function NewPropertyPage() {
             >
               + Add Characteristic
             </button>
+
           </div>
 
           {/* IMAGES */}
@@ -260,7 +337,7 @@ export default function NewPropertyPage() {
             setImages={setImages}
             handleImageUpload={handleImageUpload}
           />
-          
+
           <button
             type="submit"
             className="bg-neutral-900 text-white px-8 py-3 rounded-xl"
@@ -269,7 +346,9 @@ export default function NewPropertyPage() {
           </button>
 
         </form>
+
       </div>
+
     </section>
   )
 }
