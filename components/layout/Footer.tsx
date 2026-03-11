@@ -37,9 +37,23 @@ export default function Footer() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="rounded-t-3xl bg-neutral-900 px-8 py-6 text-neutral-300 shadow-2xl">
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-              <p className="text-sm">
-                © {new Date().getFullYear()} KW Prestige · Keller Williams
-              </p>
+
+              <div className="flex flex-col items-center md:items-start text-sm">
+                <p>
+                  © {new Date().getFullYear()} KW Prestige · Keller Williams
+                </p>
+
+                <p className="text-xs text-neutral-400">
+                  <a
+                    href="http://linkedin.com/in/basma-ennajimi-a67199289"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    Website designed by Basma Ennajimi
+                  </a>
+                </p>
+              </div>
 
               <div className="flex items-center gap-6 text-sm">
                 <a
@@ -61,6 +75,7 @@ export default function Footer() {
                   Contact
                 </a>
               </div>
+
             </div>
           </div>
         </div>
