@@ -15,7 +15,9 @@ datasource db {
 
 enum PropertyStatus {
   FOR_SALE
+  PURCHASED
   SOLD
+  DRAFT
 }
 
 enum PropertyDetailCategory {

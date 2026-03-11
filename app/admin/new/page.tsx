@@ -20,7 +20,7 @@ type PropertyFormState = {
   mls: string
   address: string
   price: number | string
-  status: "FOR_SALE" | "SOLD"
+  status: "DRAFT" | "FOR_SALE" | "PURCHASED" | "SOLD"
   type: string
   bedrooms: number | string
   bathrooms: number | string
@@ -51,7 +51,11 @@ export default function NewPropertyPage() {
   })
 
   const [images, setImages] = useState<string[]>([])
-  const [details, setDetails] = useState<Detail[]>([])
+
+  const [details, setDetails] = useState<Detail[]>([
+    { label: "", value: "", category: "BUILDING_INFO" }
+  ])
+
   const [characteristics, setCharacteristics] = useState<Characteristic[]>([])
 
   const safeImages = useMemo(
@@ -121,10 +125,46 @@ export default function NewPropertyPage() {
     setCharacteristics((prev) => prev.filter((_, index) => index !== i))
   }
 
-  const handleSubmit = async (e: any) => {
-
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+  
+    const defaultDetails = [
+      {
+        label: "Property Type",
+        value: String(form.type).trim(),
+        category: "BUILDING_INFO" as const,
+      },
+      {
+        label: "Year Built",
+        value: String(form.yearBuilt).trim(),
+        category: "BUILDING_INFO" as const,
+      },
+      {
+        label: "Square Feet",
+        value: String(form.sqft).trim(),
+        category: "BUILDING_INFO" as const,
+      },
+      {
+        label: "Parking",
+        value: String(form.parking).trim(),
+        category: "BUILDING_INFO" as const,
+      },
+      {
+        label: "Bedrooms",
+        value: String(form.bedrooms).trim(),
+        category: "ROOM" as const,
+      },
+      {
+        label: "Bathrooms",
+        value: String(form.bathrooms).trim(),
+        category: "ROOM" as const,
+      },
+    ].filter((d) => d.value !== "")
+  
+    const customDetails = details.filter(
+      (d) => d.label.trim() !== "" && d.value.trim() !== ""
+    )
+  
     const payload = {
       ...form,
       price: Number(form.price),
@@ -133,21 +173,26 @@ export default function NewPropertyPage() {
       sqft: Number(form.sqft),
       yearBuilt: Number(form.yearBuilt),
       images: safeImages,
-      details,
-      characteristics,
+  
+      details: [...defaultDetails, ...customDetails],
+  
+      characteristics: characteristics.filter(
+        (c) => c.value.trim() !== ""
+      ),
     }
-
+  
     const res = await fetch("/api/admin/create-property", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
-
+  
     if (!res.ok) {
-      alert("Create failed")
+      const txt = await res.text()
+      alert("Create failed: " + txt)
       return
     }
-
+  
     router.push("/admin")
     router.refresh()
   }
@@ -170,6 +215,7 @@ export default function NewPropertyPage() {
               <tbody className="divide-y divide-neutral-200">
 
                 {[
+                  { label: "Property ID", name: "id" },
                   { label: "Title", name: "title" },
                   { label: "MLS", name: "mls" },
                   { label: "Address", name: "address" },
@@ -190,7 +236,7 @@ export default function NewPropertyPage() {
                       <input
                         type={field.type || "text"}
                         name={field.name}
-                        value={(form as any)[field.name]}
+                        value={(form as any)[field.name] ?? ""}
                         onChange={handleChange}
                         className="w-full rounded-xl border border-neutral-300 px-4 py-2 focus:border-red-600 focus:outline-none"
                       />
@@ -208,7 +254,9 @@ export default function NewPropertyPage() {
                       onChange={handleChange}
                       className="rounded-xl border border-neutral-300 px-4 py-2"
                     >
+                      <option value="DRAFT">Draft</option>
                       <option value="FOR_SALE">For Sale</option>
+                      <option value="PURCHASED">Purchased</option>
                       <option value="SOLD">Sold</option>
                     </select>
                   </td>

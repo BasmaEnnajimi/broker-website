@@ -20,7 +20,7 @@ type PropertyFormState = {
   mls: string
   address: string
   price: number | string
-  status: "FOR_SALE" | "SOLD"
+  status: "DRAFT" | "FOR_SALE" | "PURCHASED" | "SOLD"
   type: string
   bedrooms: number | string
   bathrooms: number | string
@@ -199,7 +199,9 @@ export default function EditPropertyForm({
                   onChange={handleChange}
                   className="rounded-xl border border-neutral-300 px-4 py-2"
                 >
+                  <option value="DRAFT">Draft</option>
                   <option value="FOR_SALE">For Sale</option>
+                  <option value="PURCHASED">Purchased</option>
                   <option value="SOLD">Sold</option>
                 </select>
               </td>

@@ -8,6 +8,7 @@ import StatusToggle from "@/app/admin/components/StatusToggle"
 import DeleteButton from "@/app/admin/components/DeleteButton"
 
 export default async function AdminPage() {
+
   const session = await getServerSession(authOptions)
 
   if (!session || session.user?.role !== "ADMIN") {
@@ -15,19 +16,26 @@ export default async function AdminPage() {
   }
 
   const properties = await prisma.property.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: [
+      { status: "asc" },
+      { createdAt: "desc" }
+    ]
   })
 
   return (
     <section className="bg-white">
+
       <div className="mx-auto max-w-7xl px-6 pt-32 pb-24">
+
         <div className="mb-6 h-1 w-14 rounded-full bg-red-600" />
 
         <div className="flex items-center justify-between">
+
           <div>
             <h1 className="font-display text-4xl text-neutral-900">
               Property Management
             </h1>
+
             <p className="mt-4 text-neutral-600">
               Manage listings, update status, and maintain visibility.
             </p>
@@ -39,10 +47,13 @@ export default async function AdminPage() {
           >
             + Add Property
           </Link>
+
         </div>
 
         <div className="mt-14 overflow-hidden rounded-3xl border border-neutral-200">
+
           <table className="w-full text-left">
+
             <thead className="bg-neutral-50 text-sm text-neutral-600">
               <tr>
                 <th className="px-6 py-4">Property</th>
@@ -54,52 +65,95 @@ export default async function AdminPage() {
             </thead>
 
             <tbody>
+
               {properties.map((p) => (
+
                 <tr
                   key={p.id}
                   className="border-t border-neutral-200 text-sm"
                 >
-                  {/* PROPERTY COLUMN WITH IMAGE */}
+
+                  {/* PROPERTY COLUMN */}
                   <td className="px-6 py-4">
+
                     <Link
-                        href={`/properties/${p.id}`}
-                        className="flex items-center gap-4 group"
+                      href={`/properties/${p.id}`}
+                      className="flex items-center gap-4 group"
                     >
-                        <div className="relative h-14 w-20 overflow-hidden rounded-lg">
+
+                      <div className="relative h-14 w-20 overflow-hidden rounded-lg">
+
                         {p.images.length > 0 ? (
-                            <Image
+
+                          <Image
                             src={p.images[0]}
                             alt={p.title}
                             fill
                             className="object-cover transition group-hover:scale-105"
-                            />
+                          />
+
                         ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-xs text-neutral-400">
+
+                          <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-xs text-neutral-400">
                             No Image
-                            </div>
+                          </div>
+
                         )}
-                        </div>
 
-                        <span className="font-medium text-neutral-900 transition group-hover:text-red-600">
+                      </div>
+
+                      <span className="font-medium text-neutral-900 transition group-hover:text-red-600">
                         {p.title}
-                        </span>
-                    </Link>
-                    </td>
+                      </span>
 
+                    </Link>
+
+                  </td>
+
+                  {/* MLS */}
                   <td className="px-6 py-4 text-neutral-600">
                     {p.mls}
                   </td>
 
+                  {/* PRICE */}
                   <td className="px-6 py-4 text-neutral-600">
                     ${p.price.toLocaleString()}
                   </td>
 
+                  {/* STATUS */}
                   <td className="px-6 py-4">
-                    <StatusToggle id={p.id} status={p.status} />
+
+                    <div className="flex items-center gap-3">
+
+                      <span
+                        className={`px-3 py-1 text-xs rounded-full font-medium
+                        ${
+                          p.status === "FOR_SALE"
+                            ? "bg-green-100 text-green-700"
+                            : p.status === "PURCHASED"
+                            ? "bg-blue-100 text-blue-700"
+                            : p.status === "SOLD"
+                            ? "bg-neutral-900 text-white"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {p.status.replace("_", " ")}
+                      </span>
+
+                      <StatusToggle
+                        id={p.id}
+                        status={p.status as any}
+                      />
+
+                    </div>
+
                   </td>
 
+                  {/* ACTIONS */}
                   <td className="px-6 py-4 text-right">
+
                     <div className="flex justify-end gap-6">
+
                       <Link
                         href={`/admin/edit/${p.id}`}
                         className="text-neutral-600 transition hover:text-red-600"
@@ -108,20 +162,31 @@ export default async function AdminPage() {
                       </Link>
 
                       <DeleteButton id={p.id} />
+
                     </div>
+
                   </td>
+
                 </tr>
+
               ))}
+
             </tbody>
+
           </table>
 
           {properties.length === 0 && (
+
             <div className="p-12 text-center text-neutral-500">
               No properties found.
             </div>
+
           )}
+
         </div>
+
       </div>
+
     </section>
   )
 }

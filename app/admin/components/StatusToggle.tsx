@@ -8,17 +8,17 @@ export default function StatusToggle({
   status,
 }: {
   id: string
-  status: string
+  status: "DRAFT" | "FOR_SALE" | "PURCHASED" | "SOLD"
 }) {
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
-  const toggle = () => {
+  const changeStatus = (newStatus: string) => {
     startTransition(async () => {
-      await fetch("/api/admin/toggle-status", {
+      await fetch("/api/admin/update-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id, status: newStatus }),
       })
 
       router.refresh()
@@ -26,16 +26,16 @@ export default function StatusToggle({
   }
 
   return (
-    <button
-      onClick={toggle}
+    <select
+      value={status}
       disabled={isPending}
-      className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-        status === "FOR_SALE"
-          ? "bg-green-100 text-green-700 hover:bg-green-200"
-          : "bg-neutral-200 text-neutral-700 hover:bg-neutral-300"
-      } ${isPending ? "opacity-50" : ""}`}
+      onChange={(e) => changeStatus(e.target.value)}
+      className="rounded-full border px-3 py-1 text-xs font-medium"
     >
-      {status === "FOR_SALE" ? "For Sale" : "Sold"}
-    </button>
+      <option value="DRAFT">Draft</option>
+      <option value="FOR_SALE">For Sale</option>
+      <option value="PURCHASED">Purchased</option>
+      <option value="SOLD">Sold</option>
+    </select>
   )
 }

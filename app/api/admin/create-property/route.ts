@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { NextResponse } from "next/server"
+import { PropertyStatus } from "@prisma/client"
 
 export async function POST(req: Request) {
   try {
@@ -43,6 +44,16 @@ export async function POST(req: Request) {
       )
     }
 
+    // ✅ FILTER VALID DETAILS
+    const validDetails = (details ?? []).filter(
+      (d: any) => d.label?.trim() && d.value?.trim()
+    )
+
+    // ✅ FILTER VALID CHARACTERISTICS
+    const validCharacteristics = (characteristics ?? []).filter(
+      (c: any) => c.value?.trim()
+    )
+
     const property = await prisma.property.create({
       data: {
         id,
@@ -59,24 +70,25 @@ export async function POST(req: Request) {
         type,
         parking,
         description,
-        status,
+
+        status: (status as PropertyStatus) || "DRAFT",
 
         images: images ?? [],
 
+        highlights: [],
+
         details: {
-          create:
-            (details ?? []).map((d: any) => ({
-              label: d.label,
-              value: d.value,
-              category: d.category,
-            })),
+          create: validDetails.map((d: any) => ({
+            label: d.label,
+            value: d.value,
+            category: d.category,
+          })),
         },
 
         characteristics: {
-          create:
-            (characteristics ?? []).map((c: any) => ({
-              value: c.value,
-            })),
+          create: validCharacteristics.map((c: any) => ({
+            value: c.value,
+          })),
         },
       },
     })
