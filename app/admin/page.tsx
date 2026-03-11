@@ -123,29 +123,10 @@ export default async function AdminPage() {
                   {/* STATUS */}
                   <td className="px-6 py-4">
 
-                    <div className="flex items-center gap-3">
-
-                      <span
-                        className={`px-3 py-1 text-xs rounded-full font-medium
-                        ${
-                          p.status === "FOR_SALE"
-                            ? "bg-green-100 text-green-700"
-                            : p.status === "PURCHASED"
-                            ? "bg-blue-100 text-blue-700"
-                            : p.status === "SOLD"
-                            ? "bg-neutral-900 text-white"
-                            : "bg-yellow-100 text-yellow-700"
-                        }`}
-                      >
-                        {p.status.replace("_", " ")}
-                      </span>
-
-                      <StatusToggle
-                        id={p.id}
-                        status={p.status as any}
-                      />
-
-                    </div>
+                  <StatusToggle
+                    id={p.id}
+                    status={p.status as any}
+                  />
 
                   </td>
 

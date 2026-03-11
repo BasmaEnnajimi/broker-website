@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { PropertyStatus } from "@prisma/client"
 
 export async function PUT(
   req: Request,
@@ -8,9 +9,22 @@ export async function PUT(
   try {
 
     const { id } = await context.params
-
     const body = await req.json()
 
+    // Status toggle update
+    if (body.status && Object.keys(body).length === 1) {
+
+      const property = await prisma.property.update({
+        where: { id },
+        data: {
+          status: body.status as PropertyStatus
+        }
+      })
+
+      return NextResponse.json(property)
+    }
+
+    // Full edit update
     const {
       title,
       mls,
@@ -26,7 +40,7 @@ export async function PUT(
       description,
       images,
       details,
-      characteristics,
+      characteristics
     } = body
 
     const property = await prisma.property.update({
@@ -54,17 +68,17 @@ export async function PUT(
           create: (details ?? []).map((d: any) => ({
             label: d.label,
             value: d.value,
-            category: d.category,
-          })),
+            category: d.category
+          }))
         },
 
         characteristics: {
           deleteMany: {},
           create: (characteristics ?? []).map((c: any) => ({
-            value: c.value,
-          })),
-        },
-      },
+            value: c.value
+          }))
+        }
+      }
     })
 
     return NextResponse.json(property)
